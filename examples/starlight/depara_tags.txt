@@ -1,0 +1,11 @@
+tag_template;tag_projeto
+"__Nome da Área ou Squad do Projeto__";"Report Automatizado via Xchange Mail"
+"__Nome do Projeto__";"Template Starlight"
+"__Tópico 1__";"Pacote xchange_mail"
+"__Título Indicador 1__";"Funções Desenvolvidas"
+"__ID1__";"5"
+"__desc_id1__";"Funções criadas para gerenciar, coordenar e automatizar o envio de e-mails customizados"
+"__Tópico 2__";"Integração"
+"__Título Indicador 2__";"Plataformas Envolvidas"
+"__ID2__";"1"
+"__desc_id2__";"Possibilidade de acoplamento (Python). Futuramente, pretende-se integrar com Alteryx"

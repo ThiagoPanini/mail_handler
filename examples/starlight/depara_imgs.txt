@@ -1,0 +1,8 @@
+local_img;hosted_img
+"images/e2fe2c96-f4b8-4c68-bc87-16510ba2b053.jpg";"https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2961/stars-background2.jpg"
+"images/mountain-foreground.png";"https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2961/mountain-foreground.png"
+"images/earthspin-compressed.gif";"https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2961/earthspin-compressed.gif"
+"images/ezgif-6-8fa31ed13bb9b.gif";"https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2961/ezgif-6-8fa31ed13bb9b.gif"
+"images/facebook2x.png";"https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-outline-circle-default-gray/facebook@2x.png"
+"images/linkedin2x.png";"https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-outline-circle-default-gray/linkedin@2x.png"
+"images/instagram2x.png";"https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-outline-circle-default-gray/instagram@2x.png"
