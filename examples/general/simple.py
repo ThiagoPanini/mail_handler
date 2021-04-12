@@ -1,10 +1,10 @@
 """
 Script responsável por detalhar um exemplo de uso das
 ferramentas do módulo xchange_mail construído para 
-gerenciamento e envio de e-mails. O código starlight.py
+gerenciamento e envio de e-mails. O código simple.py
 se utiliza de tais ferramentas para enviar um report
-por e-mail utilizando um template criado a partir
-da plataforma online BeeFree
+simples por e-mail com opções de envio de dados no
+corpo ou em anexo.
 
 ------------------------------------------------------
                         SUMÁRIO
@@ -12,13 +12,12 @@ da plataforma online BeeFree
 1. Configuração inicial
     1.1 Importação de bibliotecas
     1.2 Definição das variáveis do projeto
-2. Envio de report customizado por e-mail
-    2.1 Preparando corpo via template HTML
-    2.2 Realizando envio de e-mail formatado
+2. Envio de report simples
+    2.1 Lendo base e enviando e-mail
 """
 
 # Autor: Thiago Panini
-# Data de Criação: 11/04/2021
+# Data de Criação: 12/04/2021
 
 
 """
@@ -34,8 +33,7 @@ from xchange_mail.handler import send_simple_mail
 # Python libs
 import os
 from dotenv import load_dotenv, find_dotenv
-from pandas import read_csv, read_excel
-import codecs
+from pandas import read_csv
 from datetime import datetime
 
 
@@ -51,10 +49,6 @@ load_dotenv(find_dotenv())
 
 # Definindo variáveis de diretório
 PROJECT_PATH = os.getenv('PROJECT_PATH')
-EXAMPLE_PATH = os.path.join(PROJECT_PATH, 'examples/starlight')
-HTML_PATH = os.path.join(EXAMPLE_PATH, 'starlight.html')
-DEPARA_IMGS = os.path.join(EXAMPLE_PATH, 'depara_imgs.txt')
-DEPARA_TAGS = os.path.join(EXAMPLE_PATH, 'depara_tags.txt')
 
 # Definindo variáveis de configuração do e-mail
 USERNAME = os.getenv('MAIL_FROM')
@@ -64,55 +58,33 @@ MAIL_BOX = os.getenv('MAIL_BOX')
 MAIL_TO = [os.getenv('MAIL_TO')]
 
 # Definindo variáveis de formatação do e-mail
-SUBJECT = '[STARLIGHT xchange_mail] Report HTML por E-mail'
-MAIL_SIGNATURE = ''
+SUBJECT = '[SIMPLE xchange_mail] Report HTML por E-mail'
+NOW = datetime.now()
+TODAY = NOW.strftime('%d/%m/%Y')
+if NOW.hour >= 6 and NOW.hour < 12:
+    GREETINGS = 'Bom dia'
+elif NOW.hour >= 12 and NOW.hour < 18:
+    GREETINGS = 'Boa tarde'
+else:
+    GREETINGS = 'Boa noite'
+MAIL_BODY = f'{GREETINGS}, processo realizado com sucesso em {TODAY}! <br><br>'
+MAIL_SIGNATURE = '<br>Att,<br>Desenvolvedores xchange_mail'
 
 # Variáveis para anexo de arquivos no e-mail ou no body
 CSV_FILEPATH = os.getenv('CSV_FILEPATH')
-DF_ON_BODY = False
+DF_ON_BODY = True
 DF_ON_ATTACHMENT = True
+FILE_PATHS = [CSV_FILEPATH]
 
 
 """
 ------------------------------------------------------
------- 2. ENVIO DE REPORT CUSTOMIZADO POR EMAIL ------
-        2.1 Preparando corpo via template HTML
+------------- 2. ENVIO DE REPORT SIMPLES -------------
+           2.1 Lendo base e enviando e-mail
 ------------------------------------------------------ 
 """
 
-# Lendo arquivo html
-f = codecs.open(HTML_PATH, 'r', 'utf-8')
-HTML_BODY = f.read()
-
-# Lendo depara de referências (imagens e tags)
-depara_imgs = read_csv(DEPARA_IMGS, sep=';')
-depara_tags = read_csv(DEPARA_TAGS, sep=';')
-
-# Iterando sobre cada elemento do depara de imgs
-local_img_list = list(depara_imgs['local_img'].values)
-hosted_img_list = list(depara_imgs['hosted_img'].values)
-for local_img, hosted_img in zip(local_img_list, hosted_img_list):
-    HTML_BODY = HTML_BODY.replace(local_img, hosted_img)
-
-# Iterando sobre cada elemento do depara de tags
-tag_template_list = list(depara_tags['tag_template'].values)
-tag_projeto_list = list(depara_tags['tag_projeto'].values)
-for tag_template, tag_projeto in zip(tag_template_list, tag_projeto_list):
-    HTML_BODY = HTML_BODY.replace(tag_template, tag_projeto)
-
-# Substituição de indicadores vivos
-date_report = datetime.now().strftime('%d/%m/%Y')
-HTML_BODY = HTML_BODY.replace('__date_report__', date_report)
-
-
-"""
-------------------------------------------------------
------- 2. ENVIO DE REPORT CUSTOMIZADO POR EMAIL ------
-       2.2 Realizando envio de e-mail formatado
------------------------------------------------------- 
-"""
-
-# Lendo base de dados a serem enviadas no corpo ou em anexo
+# Lendo base de dados
 df = read_csv(CSV_FILEPATH)
 
 # Enviando email com único anexo
@@ -121,7 +93,7 @@ send_simple_mail(username=USERNAME,
                  server=SERVER,
                  mail_box=MAIL_BOX,
                  subject=SUBJECT,
-                 mail_body=HTML_BODY,
+                 mail_body=MAIL_BODY,
                  mail_signature=MAIL_SIGNATURE,
                  mail_to=MAIL_TO,
                  df=df,
