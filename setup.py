@@ -42,7 +42,8 @@ setup(
     author_email='thipanini94@gmail.com',
     packages=find_packages(),
     install_requires=[
-        
+        'exchangelib==4.1.0',
+        'pretty-html-table==0.9.dev0'
     ],
     license='MIT',
     description='Solução de gerenciamento e envio de e-mails via MS Exchange',
