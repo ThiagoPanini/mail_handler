@@ -109,7 +109,7 @@ def format_mail_body(string_mail_body, mail_signature='', **kwargs):
     else:
         return HTMLBody(string_mail_body + mail_signature)
     
-# Definindo função capaz de encapsular a mensagem
+# Definindo função para envio de e-mail com múltiplos arquivos a gerenciar
 def send_mail_mult_files(meta_df, username, password, server, mail_box, subject, mail_body, 
                          mail_to, mail_signature='', auto_discover=False, access_type=DELEGATE):
     """
@@ -176,8 +176,8 @@ def send_mail_mult_files(meta_df, username, password, server, mail_box, subject,
     # Enviando mensagem
     m.send_and_save()
 
-# Definindo função capaz de encapsular a mensagem
-def send_mail_one_file(username, password, server, mail_box, subject, mail_body, mail_to, mail_signature='',
+# Definindo função envio simples de email
+def send_simple_mail(username, password, server, mail_box, subject, mail_body, mail_to, mail_signature='',
                        auto_discover=False, access_type=DELEGATE, df=None, df_on_body=False, 
                        df_on_attachment=False, attachment_filename='file.csv'):
 
