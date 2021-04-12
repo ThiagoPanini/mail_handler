@@ -111,10 +111,40 @@ def format_mail_body(string_mail_body, mail_signature='', **kwargs):
     
 # Definindo função capaz de encapsular a mensagem
 def send_mail_mult_files(meta_df, username, password, server, mail_box, subject, mail_body, 
-                         mail_to, mail_signature=''):
+                         mail_to, mail_signature='', auto_discover=False, access_type=DELEGATE):
+    """
+    Função desenvolvida para o gerenciamento de múltiplos arquivos DataFrame a serem
+    enviados no e-mail configurado, seja em anexo ou no corpo de e-mail. Como principal
+    parâmetro, essa função utiliza um DataFrame informativo chamado de "meta_df" contendo
+    as instruções necessárias relacionadas aos DataFrames de entrada do código.
+    
+    Parâmetros
+    ----------
+    :param meta_df: base contendo parâmetros informativos de ação [type: pd.DataFrame]
+                    a base meta_df contém um DataFrame distinto por linha e deve ser formada por
+        :col input: índice relacionado a base de entrada
+        :col name: nome com extensão da base a ser enviada em anexo ou no corpo do e-mail
+        :col df: base de entrada em formato DataFrame em cada linha
+        :col flag_body: flag para envio da base no corpo do e-mail
+        :col flag_attach: flag para envio da base em anexo
+    :param username: e-mail do usuário com acesso de envio de e-mail do endereço smtp [type: string]
+    :param password: senha do usuário com acesso de envio de e-mail do endereço smtp [type: string]
+    :param server: servidor responsável por gerenciar o transporte [type: string]
+    :param mail_box: endereço primário associado a conta de envio [type: string]
+    :param subject: título do e-mail a ser enviado [type: string]
+    :param mail_to: lista de recipientes do e-mail [type: list]
+    :param mail_signature: assinatura a ser colocada no final do e-mail [type: string or HTMLBody]    
+    :param auto_discover: flag para apontar ao EWS utilizando protocolo específico [type: bool, default=False]
+    :param access_type: tipo de acesso relacionado as credenciais [type: obj, default=DELEGATE]
+ 
+    Retorno
+    -------
+    Essa função não possui retorno, além do envio do e-mail com as especificações configuradas
+    """
     
     # Configurando conta de envio
-    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box)
+    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box,
+                               auto_discover=auto_discover, access_type=access_type)
 
     # Verificando dados a serem enviados no corpo
     meta_df_body = meta_df.query('flag_body == 1')
@@ -148,10 +178,37 @@ def send_mail_mult_files(meta_df, username, password, server, mail_box, subject,
 
 # Definindo função capaz de encapsular a mensagem
 def send_mail_one_file(username, password, server, mail_box, subject, mail_body, mail_to, mail_signature='',
-                       df=None, df_on_body=False, df_on_attachment=False, attachment_filename='file.csv'):
+                       auto_discover=False, access_type=DELEGATE, df=None, df_on_body=False, 
+                       df_on_attachment=False, attachment_filename='file.csv'):
+
+    """
+    Função desenvolvida para o gerenciamento de envio de e-mails independente da presença
+    de uma base de dados em formato DataFrame a ser enviada em anexo ou no corpo.
+    
+    Parâmetros
+    ----------
+    :param username: e-mail do usuário com acesso de envio de e-mail do endereço smtp [type: string]
+    :param password: senha do usuário com acesso de envio de e-mail do endereço smtp [type: string]
+    :param server: servidor responsável por gerenciar o transporte [type: string]
+    :param mail_box: endereço primário associado a conta de envio [type: string]
+    :param subject: título do e-mail a ser enviado [type: string]
+    :param mail_to: lista de recipientes do e-mail [type: list]
+    :param mail_signature: assinatura a ser colocada no final do e-mail [type: string or HTMLBody]    
+    :param auto_discover: flag para apontar ao EWS utilizando protocolo específico [type: bool, default=False]
+    :param access_type: tipo de acesso relacionado as credenciais [type: obj, default=DELEGATE]
+    :param df: base de dados opcionalmente enviada em anexo ou no corpo [type: pd.DataFrame]
+    :param df_on_body: flag para envio da base de dados no corpo do e-mail [type: bool, default=False]
+    :param df_on_attachment: flag para envio da base de dados em anexo [type: bool, default=False]
+    :param attachment_filename: nome do arquivo com extensão a ser enviado em anexo [type: string, default='file.csv']
+ 
+    Retorno
+    -------
+    Essa função não possui retorno, além do envio do e-mail com as especificações configuradas
+    """
     
     # Configurando conta de envio
-    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box)
+    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box,
+                               auto_discover=auto_discover, access_type=access_type)
 
     # Verificando dados a serem enviados no corpo
     if df_on_body and df is not None:
