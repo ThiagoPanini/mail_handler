@@ -37,13 +37,15 @@ reqs = [str(ir.req) for ir in install_reqs]"""
 # Criando setup
 setup(
     name='xchange_mail',
-    version='0.0.1',
+    version='0.0.2',
     author='Thiago Panini',
     author_email='thipanini94@gmail.com',
     packages=find_packages(),
     install_requires=[
-        'exchangelib==4.1.0',
-        'pretty-html-table==0.9.dev0'
+        'exchangelib==3.3.0',
+        'pretty-html-table==0.9.dev0',
+        'pandas==1.1.5',
+        'python-dotenv==0.17.0'
     ],
     license='MIT',
     description='Solução de gerenciamento e envio de e-mails via MS Exchange',
