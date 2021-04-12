@@ -123,7 +123,7 @@ for path in FILE_PATHS:
     except:
         dfs.append(read_excel(path))
 
-# Enviando email
+# Enviando email com único anexo
 send_mail_one_file(username=USERNAME,
                    password=PWD,
                    server=SERVER,
