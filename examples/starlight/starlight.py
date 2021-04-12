@@ -30,7 +30,7 @@ da plataforma online BeeFree
 
 # Funções xchange_mail
 from xchange_mail.handler import connect_exchange, attach_file, \
-    format_mail_body, send_mail_one_file, send_mail_mult_files
+    format_mail_body, send_simple_mail
 
 # Third-part
 import os
@@ -124,15 +124,15 @@ for path in FILE_PATHS:
         dfs.append(read_excel(path))
 
 # Enviando email com único anexo
-send_mail_one_file(username=USERNAME,
-                   password=PWD,
-                   server=SERVER,
-                   mail_box=MAIL_BOX,
-                   subject=SUBJECT,
-                   mail_body=HTML_BODY,
-                   mail_signature=MAIL_SIGNATURE,
-                   mail_to=MAIL_TO,
-                   df=dfs[0],
-                   df_on_body=DF_ON_BODY,
-                   df_on_attachment=DF_ON_ATTACHMENT,
-                   attachment_filename='performances.csv')
+send_simple_mail(username=USERNAME,
+                 password=PWD,
+                 server=SERVER,
+                 mail_box=MAIL_BOX,
+                 subject=SUBJECT,
+                 mail_body=HTML_BODY,
+                 mail_signature=MAIL_SIGNATURE,
+                 mail_to=MAIL_TO,
+                 df=dfs[0],
+                 df_on_body=DF_ON_BODY,
+                 df_on_attachment=DF_ON_ATTACHMENT,
+                 attachment_filename='performances.csv')
