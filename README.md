@@ -31,7 +31,7 @@ O script `starlight.py`, desde configurado previamente com as credenciais do usu
 
 ## Instalação via pip
 
-Adicionalmente, é possível realizar a instalação do pacote diretamente do <a href="">PyPI</a>. Para tal, é recomendada a criação de um ambiente virtual para o projeto ao qual exige a utilização das funcionalidades aqui expostas a partir da sequência de comandos abaixo:
+Adicionalmente, é possível realizar a instalação do pacote diretamente do <a href="https://pypi.org/project/xchange-mail/0.0.1/">PyPI</a>. Para tal, é recomendada a criação de um ambiente virtual para o projeto ao qual exige a utilização das funcionalidades aqui expostas a partir da sequência de comandos abaixo:
 
 ```bash
 # Criando e ativando ambiente virtual
