@@ -1,5 +1,14 @@
+# Variáveis de ambiente
+.env
+
 # Checkpoint de ipynbs
 .ipynb_checkpoints/
 
-# Templates
+# Arquivos de módulos python e cache
+__pycache__
+.pyc
+*.egg-info/
+.vscode
+
+# Imagens dos templates
 images/
