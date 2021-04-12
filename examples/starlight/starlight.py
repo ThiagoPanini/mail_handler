@@ -58,16 +58,15 @@ DEPARA_TAGS = os.path.join(EXAMPLE_PATH, 'depara_tags.txt')
 load_dotenv(find_dotenv())
 
 # Definindo variáveis de configuração do e-mail
-USERNAME = 'thipanini94@gmail.com'
+USERNAME = os.getenv('MAIL_BOX')
 PWD = os.getenv('PASSWORD')
 SERVER = 'outlook.office365.com'
-MAIL_BOX = 'thipanini94@gmail.com'
-MAIL_TO = ['thipanini94@gmail.com']
+MAIL_BOX = os.getenv('MAIL_BOX')
+MAIL_TO = [os.getenv('MAIL_TO')]
 
 # Definindo variáveis de formatação do e-mail
 SUBJECT = 'xchange_mail - Starlight - Report HTML por E-mail'
-MAIL_BODY = "Relatório enviado com sucesso! Dados:<br/><br/>"
-MAIL_SIGNATURE = '<br>Att,<br>Thiago'
+MAIL_SIGNATURE = ''
 
 # Variáveis para anexo de arquivos no e-mail ou no body
 CSV_FILEPATH = '/home/paninit/workspaces/sentimentor/ml/performance.csv'
