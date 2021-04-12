@@ -79,5 +79,5 @@ urllib3==1.26.4
 wcwidth==0.2.5
 webencodings==0.5.1
 widgetsnbextension==3.5.1
--e git+https://github.com/ThiagoPanini/xchange_mail@d372e3d7798624208414399b2ea7082921182f3f#egg=xchange_mail
+-e git+https://github.com/ThiagoPanini/xchange_mail@5fe1ab1ce4a9048ac213846199fd3e6805d7cbf5#egg=xchange_mail
 zipp==3.4.1
