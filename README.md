@@ -1,5 +1,18 @@
+<h1 align="center">
+  <a href="https://pypi.org/project/xchange-mail/"><img src="https://i.imgur.com/ISexIyT.png" alt="xchange_mail logo"></a>
+</h1>
+
 <div align="center">
   <strong>Envio de E-mails via Exchange</strong>
+</div>
+<br/>
+
+<div align="center">
+![Release](https://img.shields.io/badge/release-ok-brightgreen)
+[![PyPI](https://img.shields.io/pypi/v/xchange_mail?color=blueviolet)](https://pypi.org/project/pycomp/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/xchange_mail?color=9cf)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xchange_mail?color=green)
+![PyPI - Status](https://img.shields.io/pypi/status/xchange_mail)
 </div>
 <br/>
 
