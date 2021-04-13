@@ -8,11 +8,12 @@
 <br/>
 
 <div align="center">
+  
 ![Release](https://img.shields.io/badge/release-ok-brightgreen)
-[![PyPI](https://img.shields.io/pypi/v/xchange_mail?color=blueviolet)](https://pypi.org/project/pycomp/)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/xchange_mail?color=9cf)
+[![PyPI](https://img.shields.io/pypi/v/xchange_mail?color=blueviolet)](https://pypi.org/project/xchange-mail/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xchange_mail?color=green)
 ![PyPI - Status](https://img.shields.io/pypi/status/xchange_mail)
+  
 </div>
 <br/>
 
