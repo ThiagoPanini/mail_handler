@@ -58,7 +58,7 @@ MAIL_BOX = os.getenv('MAIL_BOX')
 MAIL_TO = [os.getenv('MAIL_TO')]
 
 # Definindo variáveis de formatação do e-mail
-SUBJECT = '[SIMPLE xchange_mail] Report HTML por E-mail'
+SUBJECT = '[MULTIPLE xchange_mail] Report HTML por E-mail'
 NOW = datetime.now()
 TODAY = NOW.strftime('%d/%m/%Y')
 if NOW.hour >= 6 and NOW.hour < 12:
