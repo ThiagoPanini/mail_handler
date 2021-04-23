@@ -56,15 +56,30 @@ def attach_file(name, df):
     file_name, file_ext = os.path.splitext(name)
     
     # Salvando arquivo no buffer de acordo com extensão
-    if file_ext in ['.csv', '.txt']:
-        df.to_csv(buffer)
-    elif file_ext == '.xlsx':
-        df.to_excel(buffer)
-    else:
-        print('Extensão inválida. Opções: "csv", "txt" e "xlsx"')
+    try:
+        if file_ext in ['.csv', '.txt']:
+            df.to_csv(buffer)
+        elif file_ext == '.xlsx':
+            df.to_excel(buffer)
+        else:
+            print('Extensão inválida. Opções: "csv", "txt" e "xlsx"')
+
+        # Lendo buffer e retornando referências do anexo
+        buffer_content = buffer.getvalue()
         
-    # Lendo buffer e retornando referências do anexo
-    buffer_content = buffer.getvalue()
+    except TypeError as te:
+        # buffer de Bytes não suportado, tentando StringIO
+        buffer = io.StringIO()
+
+        if file_ext in ['.csv', '.txt']:
+            df.to_csv(buffer)
+        elif file_ext == '.xlsx':
+            df.to_excel(buffer)
+        else:
+            print('Extensão inválida. Opções: "csv", "txt" e "xlsx"')
+        
+        # Lendo buffer e retornando referências do anexo
+        buffer_content = buffer.getvalue().encode()
     
     return [name, buffer_content]
 
