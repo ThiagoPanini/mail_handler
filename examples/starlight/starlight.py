@@ -61,7 +61,11 @@ USERNAME = os.getenv('MAIL_FROM')
 PWD = os.getenv('PASSWORD')
 SERVER = 'outlook.office365.com'
 MAIL_BOX = os.getenv('MAIL_BOX')
-MAIL_TO = [os.getenv('MAIL_TO')]
+MAIL_TO = os.getenv('MAIL_TO')
+if MAIL_TO.count('@') > 1:
+    MAIL_TO = MAIL_TO.split(';')
+else:
+    MAIL_TO = [MAIL_TO]
 
 # Definindo variáveis de formatação do e-mail
 SUBJECT = '[STARLIGHT xchange_mail] Report HTML por E-mail'
