@@ -28,7 +28,7 @@ corpo ou em anexo.
 """
 
 # Funções xchange_mail
-from xchange_mail.handler import send_simple_mail
+from xchange_mail.mail import send_simple_mail
 
 # Python libs
 import os
@@ -55,7 +55,11 @@ USERNAME = os.getenv('MAIL_FROM')
 PWD = os.getenv('PASSWORD')
 SERVER = 'outlook.office365.com'
 MAIL_BOX = os.getenv('MAIL_BOX')
-MAIL_TO = [os.getenv('MAIL_TO')]
+MAIL_TO = os.getenv('MAIL_TO')
+if MAIL_TO.count('@') > 1:
+    MAIL_TO = MAIL_TO.split(';')
+else:
+    MAIL_TO = [MAIL_TO]
 
 # Definindo variáveis de formatação do e-mail
 SUBJECT = '[SIMPLE xchange_mail] Report HTML por E-mail'
@@ -69,6 +73,10 @@ else:
     GREETINGS = 'Boa noite'
 MAIL_BODY = f'{GREETINGS}, processo realizado com sucesso em {TODAY}! <br><br>'
 MAIL_SIGNATURE = '<br>Att,<br>Desenvolvedores xchange_mail'
+
+# Embedding de imagem no corpo de e-mail
+IMAGE_ON_BODY = True
+IMAGE_LOCATION = os.getenv('IMG_FILEPATH')
 
 # Variáveis para anexo de arquivos no e-mail ou no body
 CSV_FILEPATH = os.getenv('CSV_FILEPATH')
@@ -99,4 +107,6 @@ send_simple_mail(username=USERNAME,
                  df=df.head(),
                  df_on_body=DF_ON_BODY,
                  df_on_attachment=DF_ON_ATTACHMENT,
-                 attachment_filename='performances.csv')
+                 attachment_filename='performances.csv',
+                 image_on_body=IMAGE_ON_BODY,
+                 image_location=IMAGE_LOCATION)

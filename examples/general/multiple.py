@@ -28,7 +28,7 @@ corpo ou em anexo.
 """
 
 # Funções xchange_mail
-from xchange_mail.handler import send_mail_mult_files
+from xchange_mail.mail import send_mail_mult_files
 
 # Python libs
 import os

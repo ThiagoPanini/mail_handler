@@ -26,7 +26,7 @@ da biblitoeca xchange_mail
 """
 
 # Funções xchange_mail
-from xchange_mail.handler import send_simple_mail
+from xchange_mail.mail import send_simple_mail
 
 # Python libs
 import os
