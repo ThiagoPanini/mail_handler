@@ -3,7 +3,7 @@
 </h1>
 
 <div align="center">
-  <strong>Sending emails with basic formatting using exchangelib</strong>
+  <strong>📧 Sending emails with basic formatting using exchangelib 📧</strong>
 </div>
 <br/>
 
@@ -26,47 +26,61 @@
 </div>
 <br/>
 
+## Table of contents
+
+- [About xchange_mail](#about-xchange_mail)
+- [Package Structure](#package-structure)
+- [Installing the Package](#installing-the-package)
+- [Examples](#examples)
+
+___
+
+## About xchange_mail
+
+This python package was build for making the mail sending processing through exchangelib a little bit easier. The idea is to create some custom functions for a limited use cases, so the user won't need to configure or define details on Account or Config exchangelib classes, but rather execute basic functions for sending basic emails.
+
+The **examples** section will clarify some use cases of `xchange_mail` package for helping users to send basic emails through MS Exchange. Keep watching this documentation.
+
+## Package Structure
+
+At this time, the package is built around just one module called `mail`. This module contains some functions for helping users connecting with Exchange server and also sending basic mails with plain text or HTML body messages. The table below has the explanation of the main componentes of this `mail` module.
+
+| Function                | Short Description                                                                         |
+| :---------------------: | :---------------------------------------------------------------------------------------: |
+| `connect_exchange()`    | Receives some user credentials for connecting to Exchange and returning an Account object |
+| `attach_file()`         | Stores a pandas DataFrame object on buffers and returns a two-elements list containing the attach name and the attach object |
+| `format_mail_body()`    | Creates a HTMLBody object. If a DataFrame is passed as an argument, it uses `pretty_html_table` package for customizing a table before creating the HTMLBody |
+| `send_simple_mail()`    | Sends a simple mail through exchange with possibilities for attaching one file, sending a DataFrame object on mail body, sending an image on mail body or attached or using html code for customizing mail |
+| `send_mail_mult_files()` | Can send multiple files attached or multiple DataFrames on body |
+
 Biblioteca python construída para facilitar o gerenciamento e envio de e-mails utilizando a biblioteca `exchangelib` como ORM da caixa de e-mails Exchange.
 
-## Instalação via git clone
+___
 
-Para utilização das funcionalidades encapsuladas neste repositório, é possível executar o comando `git clone` na máquina local.
+## Installing the Package
 
-```bash
-$ git clone https://github.com/ThiagoPanini/xchange_mail.git 
-```
+The latest version of `xchange_mail` package are published and available on [PyPI repository](https://pypi.org/project/xchange-mail/)
 
-Nesse cenário, o usuário pode usufruir de scripts disponibilizados no diretório `examples` para terem uma base de utilização das ferramentas deste repositório. Um dos exemplos de uso está presente em `examples/starlight`, sendo seu conteúdo é dado por:
-
-```bash
-└── starlight
-    ├── depara_imgs.txt
-    ├── depara_tags.txt
-    ├── starlight.html
-    └── starlight.py
-```
-
-O script `starlight.py`, desde configurado previamente com as credenciais do usuário executar do código, permite o envio de um e-mail altamente customizado com um template HTML com o tema Starlight criado a partir da plataforma <a href="https://beefree.io/">Bee Free</a>.
-
-<h1 align="center">
-  <img src="https://i.imgur.com/SeNZiJ6.png" alt="starlight_template">
-</h1>
-
-## Instalação via pip
-
-Adicionalmente, é possível realizar a instalação do pacote diretamente do <a href="https://pypi.org/project/xchange-mail/0.0.1/">PyPI</a>. Para tal, é recomendada a criação de um ambiente virtual para o projeto ao qual exige a utilização das funcionalidades aqui expostas a partir da sequência de comandos abaixo:
+> :pushpin: **Note:** as a good practice for every Python project, the creation of a <a href="https://realpython.com/python-virtual-environments-a-primer/">virtual environment</a> is needed to get a full control of dependencies and third part packages on your code. By this way, the code below can be used for creating a new venv on your OS.
+> 
 
 ```bash
-# Criando e ativando ambiente virtual
-$ python3 -m venv <nome_venv>
-$ source ~/<nome_venv>/bin/activate
+# Creating and activating venv on Linux
+$ python -m venv <path_venv>/<name_venv>
+$ source <path_venv>/<nome_venv>/bin/activate
 
-# Instalando biblioteca
-pip install xchange_mail
+# Creating and activating venv on Windows
+$ python -m venv <path_venv>/<name_venv>
+$ <path_venv>/<nome_venv>/Scripts/activate
 ```
 
-Assim, em qualquer script Python, será possível importar os módulos da biblioteca da seguinte forma
+With the new venv active, all you need is execute the code below using pip for installing the package (upgrading pip is optional):
 
 ```bash
-from xchange_mail.handler import send_simple_mail
+$ pip install --upgrade pip
+$ pip install xchange_mail
 ```
+
+The xchange_mail package is built in a layer above some other python packages like exchangelib and pandas. So, when installing mlcomposer, the pip utility will also install all dependencies linked to the package.
+
+## Examples
