@@ -3,17 +3,26 @@
 </h1>
 
 <div align="center">
-  <strong>Envio de E-mails via Exchange</strong>
+  <strong>Sending emails with basic formatting using exchangelib</strong>
 </div>
 <br/>
 
-<div align="center">
+
+<div align="center">  
+ 
+  [![PyPI](https://img.shields.io/pypi/v/xchange_mail?color=blueviolet)](https://pypi.org/project/xchange-mail/)
+  ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xchange_mail?color=green)
+  ![PyPI - Status](https://img.shields.io/pypi/status/xchange_mail)
+
+</div>
+
+
+<div align="center">  
   
-![Release](https://img.shields.io/badge/release-ok-brightgreen)
-[![PyPI](https://img.shields.io/pypi/v/xchange_mail?color=blueviolet)](https://pypi.org/project/xchange-mail/)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/xchange_mail?color=green)
-![PyPI - Status](https://img.shields.io/pypi/status/xchange_mail)
-  
+  ![Downloads](https://img.shields.io/pypi/dm/xchange_mail?color=darkblue)
+  ![Downloads](https://img.shields.io/pypi/dw/xchange_mail?color=blue)
+  ![Downloads](https://img.shields.io/pypi/dd/xchange_mail?color=lightblue)
+
 </div>
 <br/>
 
