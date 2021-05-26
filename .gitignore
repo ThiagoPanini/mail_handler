@@ -15,3 +15,6 @@ dist/
 
 # Imagens dos templates
 images/
+
+# Testes
+tests/
