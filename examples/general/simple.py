@@ -35,6 +35,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from pandas import read_csv
 from datetime import datetime
+import ntpath
 
 
 """
@@ -77,6 +78,7 @@ MAIL_SIGNATURE = '<br>Att,<br>Desenvolvedores xchange_mail'
 # Embedding de imagem no corpo de e-mail
 IMAGE_ON_BODY = True
 IMAGE_LOCATION = os.getenv('IMG_FILEPATH')
+IMAGE_FILENAME = ntpath.basename(IMAGE_LOCATION)
 
 # Variáveis para anexo de arquivos no e-mail ou no body
 CSV_FILEPATH = os.getenv('CSV_FILEPATH')
@@ -109,4 +111,5 @@ send_simple_mail(username=USERNAME,
                  df_on_attachment=DF_ON_ATTACHMENT,
                  attachment_filename='performances.csv',
                  image_on_body=IMAGE_ON_BODY,
-                 image_location=IMAGE_LOCATION)
+                 image_location=IMAGE_LOCATION,
+                 image_filename=IMAGE_FILENAME)
