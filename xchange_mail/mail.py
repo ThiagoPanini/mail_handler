@@ -1,32 +1,71 @@
-# Importando bibliotecas
-from dotenv import load_dotenv
-import os
+"""
+---------------------------------------------------
+------------------- MODULE: Mail -------------------
+---------------------------------------------------
+This module allocates useful functions for sending
+mails using exchangelib with simple configuration
+steps
+
+Table of Contents
+---------------------------------------------------
+1. Initial setup
+    1.1 Importing libraries
+2. Sending mails through exchange
+    2.1 Auxiliar functions
+    2.2 Mail sending functions
+---------------------------------------------------
+"""
+
+# Author: Thiago Panini
+# Date: 26/05/2021
+
+
+"""
+---------------------------------------------------
+---------------- 1. INITIAL SETUP -----------------
+             1.1 Importing libraries
+---------------------------------------------------
+"""
+
+# Exchangelib classes
 from exchangelib import Credentials, Account, Configuration, Message, DELEGATE, \
                         FileAttachment, HTMLBody
+
+# Standard python libraries
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import io
 from pretty_html_table import build_table
 
-# Definindo função de conexão com o servidor
+
+"""
+---------------------------------------------------
+-------- 2. SENDING MAILS THROUGH EXCHANGE --------
+              2.1 Auxiliar functions
+---------------------------------------------------
+"""
+
+# Connecting to the server
 def connect_exchange(username, password, server, mail_box, auto_discover=False, access_type=DELEGATE):
     """
-    Realiza a conexão com o servidor através da conta exchange
+    Connects to Exchange server and generates an Account object
     
-    Parâmetros
+    Parameters
     ----------
-    :param username: e-mail do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param password: senha do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param server: servidor responsável por gerenciar o transporte [type: string]
-    :param mail_box: endereço primário associado a conta de envio [type: string]
-    :param auto_discover: flag para apontar ao EWS utilizando protocolo específico [type: bool, default=False]
-    :param access_type: tipo de acesso relacionado as credenciais [type: obj, default=DELEGATE]
+    :param username: user mail with rights for sending mails through the mail box provided [type: string]
+    :param password: user passwords smtp [type: string]
+    :param server: server for managing the mail sending [type: string]
+    :param mail_box: primary address associated to the user account [type: string]
+    :param auto_discover: flag for pointing to EWS using a specific protocol [type: bool, default=False]
+    :param access_type: access type associated to the credentials provided [type: obj, default=DELEGATE]
     
-    Retorno
-    -------
-    :return account: objeto contendo informações compiladas de uma conta de usuário
+    Return
+    ------
+    :return account: exchange object with user account information [type: Account]
     """
     
-    # Definindo e configurando credenciais
+    # Setting up credentials, configuration and returning account
     creds = Credentials(username=username, password=password)
     config = Configuration(server=server, credentials=creds)
     account = Account(primary_smtp_address=mail_box, credentials=creds,
@@ -34,41 +73,41 @@ def connect_exchange(username, password, server, mail_box, auto_discover=False, 
     
     return account
 
-# Criando função para envio de arquivos anexo
-def attach_file(name, df):
+# Function for streaming DataFrame objects and attaching it to the mail
+def buffer_dataframe(name, df):
     """
-    Armazena DataFrames em buffers e transforma o conteúdo em bytes para envio em anexo
+    Stores DataFrames object on buffers and transform the content on bytes for sending attached
     
-    Parâmetros
+    Parameters
     ----------
-    :param name: nome/referência do arquivo com a extensão [type: string]
-    :param df: base de dados em formato DataFrame [type: pd.DataFrame]
+    :param name: filename with extension (csv or xlsx) [type: string]
+    :param df: DataFrame object to be attached [type: pd.DataFrame]
     
-    Retorno
-    -------
-    :return attachment_list: lista contendo o nome e o conteúdo em bytes do arquivo anexo [type: list]
+    Return
+    ------
+    :return attachment_list: list with name [0] and DataFrame content on bytes [1] of the DataFrame provided [type: list]
     """
     
-    # Criando buffer para armazenamento de bytes
+    # Creating a buffer for storing bytes
     buffer = io.BytesIO()
     
-    # Resgatando extensão do arquivo
+    # Returning file extension
     file_name, file_ext = os.path.splitext(name)
     
-    # Salvando arquivo no buffer de acordo com extensão
+    # Saving file on buffer according to its extension
     try:
         if file_ext in ['.csv', '.txt']:
             df.to_csv(buffer)
         elif file_ext == '.xlsx':
             df.to_excel(buffer)
         else:
-            print('Extensão inválida. Opções: "csv", "txt" e "xlsx"')
+            print('Invalid extension. Options: "csv", "txt" e "xlsx"')
 
-        # Lendo buffer e retornando referências do anexo
+        # Reading buffer content
         buffer_content = buffer.getvalue()
         
     except TypeError as te:
-        # buffer de Bytes não suportado, tentando StringIO
+        # Bytes buffer was not supported. Trying string bytes
         buffer = io.StringIO()
 
         if file_ext in ['.csv', '.txt']:
@@ -76,43 +115,44 @@ def attach_file(name, df):
         elif file_ext == '.xlsx':
             df.to_excel(buffer)
         else:
-            print('Extensão inválida. Opções: "csv", "txt" e "xlsx"')
+            print('Invalid extension. Options: "csv", "txt" e "xlsx"')
         
-        # Lendo buffer e retornando referências do anexo
+        #  Reading buffer content
         buffer_content = buffer.getvalue().encode()
     
     return [name, buffer_content]
 
-# Função para formatação de código html em corpo de e-mail
-def format_mail_body(string_mail_body, mail_signature='', **kwargs):
+# Formatting html mail body and customizing DataFrames if applicable
+def format_html_body(string_mail_body, mail_signature='', **kwargs):
     """
-    Função desenvolvida para formatação do corpo do e-mail em formato HTML.
-    Opcionalmente, é possível enviar DataFrames em formato de tabela pré formatada
-    utilizando a biblioteca pretty_html_table.
+    Formats a mail string body using HTMLBody class. In addition, the function
+    can receive a DataFrame object and transform it using pretty_html_table package
+    for customizing the source object in a custom table to be sent on mail body.
     
-    Parâmetros
+    Parameters
     ----------
-    :param string_mail_body: corpo de e-mail em formato de string [type: string]
-        *pode conter código html para devida formatação e conversão
-    :param **kwargs: argumentos adicionais da função para formatação do corpo
-        :arg df: base de dados a ser enviada no corpo [type: pd.DataFrame]
-        :arg color: configuração de cor disponibilizada pelo formatador [type: string, default='blue_light']
-        :arg font_size: tamanho da fonte [type: string, default='medium']
-        :arg font_family: tipo da fonte [type: string, default='Century Gothic']
-        :arg text_align: alinhamento do texto [type: string, default='left']
+    :param string_mail_body: raw string mail body [type: string]
+        *can have html code for be transformed on HTMLBody class
+    :param **kwargs: additional parameters
+        :arg df: DataFrame object to be sent on mail body as a custom table [type: pd.DataFrame]
+        :arg color: color configuration from pretty_html_table [type: string, default='blue_light']
+        :arg font_size: font size for html table built from DataFrame [type: string, default='medium']
+        :arg font_family: font family for html table built from DataFrame [type: string, default='Century Gothic']
+        :arg text_align: text allign for html table built from DataFrame [type: string, default='left']
         
-    Retorno
-    -------
-    :return HTMLBody(string): corpo de e-mail devidamente formatado [type: string]
+    Return
+    ------
+    :return HTMLBody(string): mail body in a html format [type: HTMLBody]
     """
     
-    # Extraindo parâmetros
+    # Extracting parameters from kwargs
     df = kwargs['df'] if 'df' in kwargs else None
     color = kwargs['color'] if 'color' in kwargs else 'blue_light'
     font_size = kwargs['font_size'] if 'font_size' in kwargs else 'medium'
     font_family = kwargs['font_family'] if 'font_family' in kwargs else 'Century Gothic'
     text_align = kwargs['text_align'] if 'text_align' in kwargs else 'left'
     
+    # Building a html table from DataFrame if applicable
     if df is not None:
         html_df = build_table(df, 
                               color=color, 
@@ -122,146 +162,167 @@ def format_mail_body(string_mail_body, mail_signature='', **kwargs):
         
         return HTMLBody(string_mail_body + html_df + mail_signature)
     else:
+        # There is no DataFrame on argument. Transforming just body and signature html strings
         return HTMLBody(string_mail_body + mail_signature)
-    
-# Definindo função para envio de e-mail com múltiplos arquivos a gerenciar
-def send_mail_mult_files(meta_df, username, password, server, mail_box, subject, mail_body, 
-                         mail_to, mail_signature='', auto_discover=False, access_type=DELEGATE):
-    """
-    Função desenvolvida para o gerenciamento de múltiplos arquivos DataFrame a serem
-    enviados no e-mail configurado, seja em anexo ou no corpo de e-mail. Como principal
-    parâmetro, essa função utiliza um DataFrame informativo chamado de "meta_df" contendo
-    as instruções necessárias relacionadas aos DataFrames de entrada do código.
-    
-    Parâmetros
-    ----------
-    :param meta_df: base contendo parâmetros informativos de ação [type: pd.DataFrame]
-                    a base meta_df contém um DataFrame distinto por linha e deve ser formada por
-        :col input: índice relacionado a base de entrada
-        :col name: nome com extensão da base a ser enviada em anexo ou no corpo do e-mail
-        :col df: base de entrada em formato DataFrame em cada linha
-        :col flag_body: flag para envio da base no corpo do e-mail
-        :col flag_attach: flag para envio da base em anexo
-    :param username: e-mail do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param password: senha do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param server: servidor responsável por gerenciar o transporte [type: string]
-    :param mail_box: endereço primário associado a conta de envio [type: string]
-    :param subject: título do e-mail a ser enviado [type: string]
-    :param mail_to: lista de recipientes do e-mail [type: list]
-    :param mail_signature: assinatura a ser colocada no final do e-mail [type: string or HTMLBody]    
-    :param auto_discover: flag para apontar ao EWS utilizando protocolo específico [type: bool, default=False]
-    :param access_type: tipo de acesso relacionado as credenciais [type: obj, default=DELEGATE]
- 
-    Retorno
-    -------
-    Essa função não possui retorno, além do envio do e-mail com as especificações configuradas
-    """
-    
-    # Configurando conta de envio
-    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box,
-                               auto_discover=auto_discover, access_type=access_type)
 
-    # Verificando dados a serem enviados no corpo
-    meta_df_body = meta_df.query('flag_body == 1')
-    if len(meta_df_body) > 0:
-        html_df = pd.DataFrame(meta_df_body['df']).iloc[0, :]['df']
-        html_body = format_mail_body(mail_body, df=html_df, mail_signature=mail_signature)
-    else:
-        html_body = format_mail_body(mail_body, mail_signature=mail_signature)
-    
-    # Preparando mensagem
-    m = Message(account=account,
-                subject=subject,
-                body=html_body,
-                to_recipients=mail_to)
-    
-    # Verificando anexos e preparando estruturas
-    meta_df_attach = meta_df.query('flag_attach == 1')
-    file_names = list(meta_df_attach['name'])
-    file_dfs = list(meta_df_attach['df'])
-
-    attach_dict = {file_names.index(name) + 1: {'name': name, 'df': df} for name, df in zip(file_names, file_dfs)}
-    attachments = [attach_file(inner_dict['name'], inner_dict['df']) for idx, inner_dict in attach_dict.items()]
-
-    # Anexando arquivos
-    for name, content in attachments or []:
-        file = FileAttachment(name=name, content=content)
-        m.attach(file)
-
-    # Enviando mensagem
-    m.send_and_save()
-
-# Definindo função envio simples de email
+# Sending a simple mail with useful customization
 def send_simple_mail(username, password, server, mail_box, subject, mail_body, mail_to, mail_signature='',
                      auto_discover=False, access_type=DELEGATE, df=None, df_on_body=False, 
-                     df_on_attachment=False, attachment_filename='file.csv', image_on_body=False, image_location=None):
-
+                     df_on_attachment=False, attachment_filename='file.csv', image_on_body=False, 
+                     image_location=None, image_filename='image.png', **kwargs):
     """
-    Função desenvolvida para o gerenciamento de envio de e-mails independente da presença
-    de uma base de dados em formato DataFrame a ser enviada em anexo ou no corpo.
+    Handles the mail sending of a simple mail. Things that this function can do:
+        * Send a mail with simple mail subject, body and signature for one or more recipients
+        * Send a mail with a custom HTML body or template for one or more recipients
+        * Send a mail with a DataFrame attached or even on body using pretty_html build_table function
+        * Send a mail with an image attached or even on body using cid
     
-    Parâmetros
+    Parameters
     ----------
-    :param username: e-mail do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param password: senha do usuário com acesso de envio de e-mail do endereço smtp [type: string]
-    :param server: servidor responsável por gerenciar o transporte [type: string]
-    :param mail_box: endereço primário associado a conta de envio [type: string]
-    :param subject: título do e-mail a ser enviado [type: string]
-    :param mail_to: lista de recipientes do e-mail [type: list]
-    :param mail_signature: assinatura a ser colocada no final do e-mail [type: string or HTMLBody]    
-    :param auto_discover: flag para apontar ao EWS utilizando protocolo específico [type: bool, default=False]
-    :param access_type: tipo de acesso relacionado as credenciais [type: obj, default=DELEGATE]
-    :param df: base de dados opcionalmente enviada em anexo ou no corpo [type: pd.DataFrame]
-    :param df_on_body: flag para envio da base de dados no corpo do e-mail [type: bool, default=False]
-    :param df_on_attachment: flag para envio da base de dados em anexo [type: bool, default=False]
-    :param attachment_filename: nome do arquivo com extensão a ser enviado em anexo [type: string, default='file.csv']
+    :param username: user mail with rights for sending mails through the mail box provided [type: string]
+    :param password: user passwords smtp [type: string]
+    :param server: server for managing the mail sending [type: string]
+    :param mail_box: primary address associated to the user account [type: string]
+    :param subject: mail subject [type: string]
+    :param mail_body: body raw string or html code [type: string]
+    :param mail_to: recipients list [type: list]
+    :param mail_signature: raw string or html code to be put at the end of body [type: string, default='']
+    :param auto_discover: flag for pointing to EWS using a specific protocol [type: bool, default=False]
+    :param access_type: access type associated to the credentials provided [type: obj, default=DELEGATE]
+    :param df: DataFrame object that can be sent attached or on mail body [type: pd.DataFrame, default=None]
+    :param df_on_body: flag for sending DataFrame on mail body as a custom table [type: bool, default=False]
+    :param df_on_attachment: flag for sending DataFrame file attached [type: bool, default=False]
+    :param attachment_filename: filename for attached DataFrame [type: string, default='file.csv']
+    :param image_on_body: flag for sending an image on mail body [type: bool, default=False]
+    :param image_location: location of image stored on disk [type: string, default=None]
+    :param image_filename: filename for attached image [type: string, default='image.png']
+    :param **kwargs: additional parameters
+        :arg df: DataFrame object to be sent on mail body as a custom table [type: pd.DataFrame]
+        :arg color: color configuration from pretty_html_table [type: string, default='blue_light']
+        :arg font_size: font size for html table built from DataFrame [type: string, default='medium']
+        :arg font_family: font family for html table built from DataFrame [type: string, default='Century Gothic']
+        :arg text_align: text allign for html table built from DataFrame [type: string, default='left']
  
-    Retorno
-    -------
-    Essa função não possui retorno, além do envio do e-mail com as especificações configuradas
+    Return
+    ------
+    This function returns anything besides the mail sending
     """
     
-    # Configurando conta de envio
+    # Creating and configuring account using function parameters
     account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box,
                                auto_discover=auto_discover, access_type=access_type)
 
-    # Verificando dados a serem enviados no corpo
-    if df_on_body and df is not None:
-        html_body = format_mail_body(mail_body, df=df, mail_signature=mail_signature)
-    else:
-        html_body = format_mail_body(mail_body, mail_signature=mail_signature)
+    # Extracting kwargs
+    color = kwargs['color'] if 'color' in kwargs else 'blue_light'
+    font_size = kwargs['font_size'] if 'font_size' in kwargs else 'medium'
+    font_family = kwargs['font_family'] if 'font_family' in kwargs else 'Century Gothic'
+    text_align = kwargs['text_align'] if 'text_align' in kwargs else 'left'
 
-    # Preparando mensagem
+    # Formatting html to be sent on body. If df is passed, it builds a custom html table
+    if df_on_body and df is not None:
+        html_body = format_html_body(mail_body, df=df, mail_signature=mail_signature, color=color,
+                                     font_size=font_size, font_family=font_family, text_align=text_align)
+    else:
+        html_body = format_html_body(mail_body, mail_signature=mail_signature, color=color,
+                                     font_size=font_size, font_family=font_family, text_align=text_align)
+
+    # Creating a message object
     m = Message(account=account,
                 subject=subject,
                 body=html_body,
                 to_recipients=mail_to)
     
-    # Verificando anexos e preparando estruturas
+    # Validating attachments
     if df_on_attachment and df is not None:
-        attachments = [attach_file(name=attachment_filename, df=df)]
+        attachments = [buffer_dataframe(name=attachment_filename, df=df)]
 
-        # Anexando arquivos
+        # Attaching a DataFrame
         for name, content in attachments or []:
             file = FileAttachment(name=name, content=content)
             m.attach(file)
 
-
-    # Verificando imagem a ser enviada no corpo
+    # Putting image on body if applicable
     if image_on_body and image_location is not None:
-
+        
+        # Opening local image and creating the attachment content
         with open(image_location, 'rb') as f:
             img = FileAttachment(
-                name=image_location, content=f.read(),
+                name=image_filename, content=f.read(),
                 is_inline=True, content_id=image_location
             )
 
-        # Definindo corpo de e-mail com embedding da imagem no body
+        # Attaching content and building a new HTMLBody with image
         m.attach(img)
         m.body = HTMLBody(
             f'<html><body><img src="cid:{image_location}"></body></html>'
         )
 
-    # Enviando mensagem
+    # Sending message
+    m.send_and_save()
+
+# Sending a mail using a meta_df data for handling multiple DataFrames and actions
+def send_mail_mult_files(meta_df, username, password, server, mail_box, subject, mail_body, 
+                         mail_to, mail_signature='', auto_discover=False, access_type=DELEGATE):
+    """
+    Handles multiple DataFrames object using a meta_df DataFrame that guides actions for each object.
+    The mailing proccess uses this meta_df for attaching, sending DataFrames on body and more.
+    
+    Parâmetros
+    ----------
+    :param meta_df: DataFrame object with informative paramters for guiding actions [type: pd.DataFrame]
+        *the meta_df object must a have one DataFrame per line. The columns of meta_df are:
+        :col input: numerical index for each DataFrame
+        :col name: name with extension of each DataFrame
+        :col df: DataFrame object
+        :col flag_body: flag for sending the DataFrame on mail body
+        :col flag_attach: flag for sending the DataFrame attached
+    :param username: user mail with rights for sending mails through the mail box provided [type: string]
+    :param password: user passwords smtp [type: string]
+    :param server: server for managing the mail sending [type: string]
+    :param mail_box: primary address associated to the user account [type: string]
+    :param subject: mail subject [type: string]
+    :param mail_body: body raw string or html code [type: string]
+    :param mail_to: recipients list [type: list]
+    :param mail_signature: raw string or html code to be put at the end of body [type: string, default='']
+    :param auto_discover: flag for pointing to EWS using a specific protocol [type: bool, default=False]
+    :param access_type: access type associated to the credentials provided [type: obj, default=DELEGATE]
+ 
+    Return
+    ------
+    This function returns anything besides sending the configured mail
+    """
+    
+    # Setting up account
+    account = connect_exchange(username=username, password=password, server=server, mail_box=mail_box,
+                               auto_discover=auto_discover, access_type=access_type)
+
+    # Filtering and formating DataFrames to be sent on body
+    meta_df_body = meta_df.query('flag_body == 1')
+    if len(meta_df_body) > 0:
+        html_df = pd.DataFrame(meta_df_body['df']).iloc[0, :]['df']
+        html_body = format_html_body(mail_body, df=html_df, mail_signature=mail_signature)
+    else:
+        html_body = format_html_body(mail_body, mail_signature=mail_signature)
+    
+    # Creating a message object
+    m = Message(account=account,
+                subject=subject,
+                body=html_body,
+                to_recipients=mail_to)
+    
+    # Filtering and preparing DataFrames to be sent attached
+    meta_df_attach = meta_df.query('flag_attach == 1')
+    file_names = list(meta_df_attach['name'])
+    file_dfs = list(meta_df_attach['df'])
+
+    attach_dict = {file_names.index(name) + 1: {'name': name, 'df': df} for name, df in zip(file_names, file_dfs)}
+    attachments = [buffer_dataframe(inner_dict['name'], inner_dict['df']) for idx, inner_dict in attach_dict.items()]
+
+    # Attaching files
+    for name, content in attachments or []:
+        file = FileAttachment(name=name, content=content)
+        m.attach(file)
+
+    # Sending message
     m.send_and_save()
 
