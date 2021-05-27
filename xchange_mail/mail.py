@@ -1,4 +1,32 @@
-# Importando bibliotecas
+"""
+---------------------------------------------------
+------------------- MODULE: Mail -------------------
+---------------------------------------------------
+This module allocates useful functions for sending
+mails using exchangelib with simple configuration
+steps
+
+Table of Contents
+---------------------------------------------------
+1. Initial setup
+    1.1 Importing libraries
+2. Sending mails through exchange
+    2.1 Auxiliar functions
+    2.2 Mail sending functions
+---------------------------------------------------
+"""
+
+# Author: Thiago Panini
+# Date: 26/05/2021
+
+
+"""
+---------------------------------------------------
+---------------- 1. INITIAL SETUP -----------------
+             1.1 Importing libraries
+---------------------------------------------------
+"""
+
 from dotenv import load_dotenv
 import os
 from exchangelib import Credentials, Account, Configuration, Message, DELEGATE, \
