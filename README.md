@@ -32,6 +32,8 @@
 - [Package Structure](#package-structure)
 - [Installing the Package](#installing-the-package)
 - [Examples](#examples)
+- [Contribution](#contribution)
+- [Social Media](#social-media)
 
 ___
 
@@ -81,6 +83,75 @@ $ pip install --upgrade pip
 $ pip install xchange_mail
 ```
 
-The xchange_mail package is built in a layer above some other python packages like exchangelib and pandas. So, when installing mlcomposer, the pip utility will also install all dependencies linked to the package.
+The xchange_mail package is built in an upper layer above some other python packages like exchangelib and pandas. So, when installing mlcomposer, the pip utility will also install all dependencies linked to the package.
 
 ## Examples
+
+After introducing the package, it's time to explain it in a deeper way: through examples. On this Github repository, it's possible to find some good uses of xchange_mail on `examples/` folder. In practice, for sending a basic email it's possible to execute the `send_simple_mail()` function with few parameter configuration as seen below:
+
+```python
+from xchange_mail.mail import send_simple_mail
+
+# Extracting environment variables from a .env file (optional)
+USERNAME = os.getenv('MAIL_FROM')
+PWD = os.getenv('PASSWORD')
+SERVER = 'outlook.office365.com'
+MAIL_BOX = os.getenv('MAIL_BOX')
+MAIL_TO = os.getenv('MAIL_TO')
+
+# Sending a basic mail
+send_simple_mail(username=USERNAME,
+                 password=PWD,
+                 server=SERVER,
+                 mail_box=MAIL_BOX,
+                 subject='This is a xchange_mail test',
+                 mail_body='Testing the package by sending a simple mail',
+                 mail_signature='Regards, xchange_mail developers',
+                 mail_to=MAIL_TO)
+```
+
+Done! Almost all other package features are built around this `send_simple_mail()` function and the other one called `send_mail_mult_files()`. Just to clarify, there are some parameters that can be set on the function above for sending a pandas DataFrame attached on mail body, for example. There is also a feature for sending an image embedding on mail body. The code below is an example of sending a simple mail with a DataFrame object attached, on mail body with an image saved locally.
+
+```python
+import pandas as pd
+from xchange_mail.mail import send_simple_mail
+
+# Extracting environment variables from a .env file (optional)
+USERNAME = os.getenv('MAIL_FROM')
+PWD = os.getenv('PASSWORD')
+SERVER = 'outlook.office365.com'
+MAIL_BOX = os.getenv('MAIL_BOX')
+MAIL_TO = os.getenv('MAIL_TO')
+
+# Sending a basic mail
+send_simple_mail(username=USERNAME,
+                 password=PWD,
+                 server=SERVER,
+                 mail_box=MAIL_BOX,
+                 subject='This is a xchange_mail test',
+                 mail_body='Testing the package by sending a simple mail',
+                 mail_signature='Regards, xchange_mail developers',
+                 mail_to=MAIL_TO,
+                 df_on_body=True,
+                 df_on_attachment=True,
+                 df=df,
+                 attachment_filename='pandas_dataframe.csv',
+                 image_on_body=True,
+                 image_location='/home/user/image_dir/image.png')
+```
+
+For new use cases, please take a look at `examples/` folder on this repository.
+
+
+## Contribution
+
+The xchange_mail python package is an open source implementation and the more people use it, the more happy the developers will be. So if you want to contribute with xchange_mail, please feel free to follow the best practices for implementing coding on this github repository through creating new branches, making merge requests and pointig out whenever you think there is a new topic to explore or a bug to be fixed.
+
+Thank you very much for reaching this and it will be a pleasure to have you as xchange_mail user or developer.
+
+___
+
+## Social Media
+
+* Follow me on LinkedIn: https://www.linkedin.com/in/thiago-panini/
+* See my other Python packages: https://github.com/ThiagoPanini
