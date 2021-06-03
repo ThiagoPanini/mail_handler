@@ -79,9 +79,11 @@ MAIL_SIGNATURE = '<br>Att,<br>Desenvolvedores xchange_mail'
 IMAGE_ON_BODY = True
 IMAGE_LOCATION = os.getenv('IMG_FILEPATH')
 IMAGE_FILENAME = ntpath.basename(IMAGE_LOCATION)
+IMAGE_HYPERLINK = 'https://www.linkedin.com/in/thiago-panini/'
 
 # Variáveis para anexo de arquivos no e-mail ou no body
 CSV_FILEPATH = os.getenv('CSV_FILEPATH')
+PDF_FILEPATH = os.getenv('PDF_FILEPATH')
 DF_ON_BODY = True
 DF_ON_ATTACHMENT = True
 FILE_PATHS = [CSV_FILEPATH]
@@ -112,4 +114,6 @@ send_simple_mail(username=USERNAME,
                  attachment_filename='performances.csv',
                  image_on_body=IMAGE_ON_BODY,
                  image_location=IMAGE_LOCATION,
-                 image_filename=IMAGE_FILENAME)
+                 image_filename=IMAGE_FILENAME,
+                 image_hyperlink=IMAGE_HYPERLINK,
+                 local_attachment_path=PDF_FILEPATH)

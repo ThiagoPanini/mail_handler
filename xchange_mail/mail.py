@@ -33,6 +33,7 @@ from exchangelib import Credentials, Account, Configuration, Message, DELEGATE, 
 
 # Standard python libraries
 import os
+import ntpath
 from dotenv import load_dotenv
 import pandas as pd
 import io
@@ -166,10 +167,11 @@ def format_html_body(string_mail_body, mail_signature='', **kwargs):
         return HTMLBody(string_mail_body + mail_signature)
 
 # Sending a simple mail with useful customization
-def send_simple_mail(username, password, server, mail_box, subject, mail_body, mail_to, mail_signature='',
+def send_simple_mail(username, password, server, mail_box, subject, mail_to, mail_body='', mail_signature='',
                      auto_discover=False, access_type=DELEGATE, df=None, df_on_body=False, 
                      df_on_attachment=False, attachment_filename='file.csv', image_on_body=False, 
-                     image_location=None, image_filename='image.png', **kwargs):
+                     image_location=None, image_filename='image.png', image_hyperlink=None, 
+                     local_attachment_path=None, **kwargs):
     """
     Handles the mail sending of a simple mail. Things that this function can do:
         * Send a mail with simple mail subject, body and signature for one or more recipients
@@ -196,6 +198,8 @@ def send_simple_mail(username, password, server, mail_box, subject, mail_body, m
     :param image_on_body: flag for sending an image on mail body [type: bool, default=False]
     :param image_location: location of image stored on disk [type: string, default=None]
     :param image_filename: filename for attached image [type: string, default='image.png']
+    :param image_hyperlink: hyperlink to be put on image body [type: string, default=None]
+    :param local_attachment_path: path to file to be attached [type: string, default=None]
     :param **kwargs: additional parameters
         :arg df: DataFrame object to be sent on mail body as a custom table [type: pd.DataFrame]
         :arg color: color configuration from pretty_html_table [type: string, default='blue_light']
@@ -253,9 +257,29 @@ def send_simple_mail(username, password, server, mail_box, subject, mail_body, m
 
         # Attaching content and building a new HTMLBody with image
         m.attach(img)
-        m.body = HTMLBody(
-            f'<html><body><img src="cid:{image_location}"></body></html>'
-        )
+        html_image_body = f'<img src="cid:{image_location}">'
+        if image_hyperlink is not None:
+            html_image_body = f'<a href={image_hyperlink}>' + html_image_body + '</a>'
+        
+        # Adding initial body and signature
+        html_image_body = mail_body + html_image_body + mail_signature
+
+        m.body = HTMLBody(html_image_body)
+
+    # Verifying the need to attach a local file
+    local_attachments = []
+    if local_attachment_path is not None:
+        try:
+            with open(local_attachment_path, 'rb') as f:
+                content = f.read()
+            local_attachments.append((ntpath.basename(local_attachment_path), content))
+
+            # Attaching to email
+            for name, content in local_attachments or []:
+                file = FileAttachment(name=name, content=content)
+                m.attach(file)
+        except Exception as e:
+            print(f'Error on reading file {local_attachment_path}. Exception: {e}')
 
     # Sending message
     m.send_and_save()
